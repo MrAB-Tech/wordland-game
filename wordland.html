@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adventure of Wordland</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f3f3;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .options {
+            list-style: none;
+            padding: 0;
+        }
+        .options li {
+            margin: 10px 0;
+        }
+        button {
+            background: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            font-size: 1.2em;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Adventure of Wordland</h1>
+        <div id="game">
+            <div id="question-container">
+                <div class="question" id="question">Loading question...</div>
+                <ul class="options" id="options"></ul>
+            </div>
+            <button id="next-btn" style="display: none;">Next Question</button>
+            <div class="result" id="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "The preacher addressed the people who attended the service.",
+                options: ["spectators", "crowd", "mob", "congregation", "multitude"],
+                correct: 3
+            },
+            {
+                question: "The farmers could stand the heat.",
+                options: ["bear", "wait for", "enjoy", "expect", "talk about"],
+                correct: 0
+            },
+            {
+                question: "My father has set his heart on a roast chicken dinner for Christmas.",
+                options: [
+                    "wants more than anything else a roast chicken dinner for Christmas",
+                    "has a heart painted on the Christmas chicken",
+                    "can take the roast chicken or leave it",
+                    "has attended his heart to a roast chicken",
+                    "just bought a heart-shaped roast chicken"
+                ],
+                correct: 0
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        const questionElement = document.getElementById("question");
+        const optionsElement = document.getElementById("options");
+        const nextButton = document.getElementById("next-btn");
+        const resultElement = document.getElementById("result");
+
+        function loadQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionElement.textContent = currentQuestion.question;
+            optionsElement.innerHTML = "";
+            currentQuestion.options.forEach((option, index) => {
+                const li = document.createElement("li");
+                li.innerHTML = `<button onclick="checkAnswer(${index})">${option}</button>`;
+                optionsElement.appendChild(li);
+            });
+        }
+
+        function checkAnswer(selectedIndex) {
+            const currentQuestion = questions[currentQuestionIndex];
+            if (selectedIndex === currentQuestion.correct) {
+                score++;
+                resultElement.textContent = "Correct! Well done.";
+                resultElement.style.color = "green";
+            } else {
+                resultElement.textContent = "Oops! That's not correct.";
+                resultElement.style.color = "red";
+            }
+            resultElement.style.display = "block";
+            nextButton.style.display = "inline-block";
+        }
+
+        nextButton.addEventListener("click", () => {
+            resultElement.style.display = "none";
+            nextButton.style.display = "none";
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                questionElement.textContent = "You’ve completed the adventure!";
+                optionsElement.innerHTML = "";
+                resultElement.textContent = `Your score is ${score}/${questions.length}.`;
+                resultElement.style.display = "block";
+                nextButton.style.display = "none";
+            }
+        });
+
+        loadQuestion();
+    </script>
+</body>
+</html>
+
