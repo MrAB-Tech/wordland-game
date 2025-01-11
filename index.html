@@ -6,57 +6,113 @@
     <title>Adventure of Wordland</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f3f3f3;
+            background: linear-gradient(to bottom, #74ebd5, #ACB6E5);
             color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
         }
         .container {
-            max-width: 800px;
-            margin: 50px auto;
+            max-width: 900px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
             padding: 20px;
-            background: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1.5s;
+        }
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 20px;
         }
         .question {
+            font-size: 1.5em;
             margin-bottom: 20px;
         }
         .options {
             list-style: none;
             padding: 0;
+            margin: 0;
         }
         .options li {
             margin: 10px 0;
         }
-        button {
-            background: #007BFF;
+        .options button {
+            background: #4CAF50;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 15px 30px;
+            font-size: 1em;
+            border-radius: 10px;
             cursor: pointer;
-            border-radius: 5px;
+            transition: background 0.3s;
         }
-        button:hover {
-            background: #0056b3;
+        .options button:hover {
+            background: #45a049;
         }
-        .result {
-            font-size: 1.2em;
+        #next-btn {
             margin-top: 20px;
             display: none;
+            background: #008CBA;
+            padding: 15px 30px;
+            color: white;
+            border-radius: 10px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        #next-btn:hover {
+            background: #007bb5;
+        }
+        .result {
+            font-size: 1.5em;
+            margin-top: 20px;
+            display: none;
+            color: #FF5722;
+        }
+        .progress {
+            height: 20px;
+            width: 100%;
+            background: #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #4CAF50;
+            transition: width 0.5s;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Adventure of Wordland</h1>
+        <div class="progress">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
         <div id="game">
             <div id="question-container">
                 <div class="question" id="question">Loading question...</div>
                 <ul class="options" id="options"></ul>
             </div>
-            <button id="next-btn" style="display: none;">Next Question</button>
+            <button id="next-btn">Next Question</button>
             <div class="result" id="result"></div>
         </div>
     </div>
@@ -74,6 +130,26 @@
                 correct: 0
             },
             {
+                question: "The Local Government Chairman advised his people to work for the advancement of their community.",
+                options: ["fall", "progress", "backwardness", "advent", "coming"],
+                correct: 1
+            },
+            {
+                question: "They searched thoroughly for the money.",
+                options: ["continuously", "quickly", "eagerly", "secretly", "carefully"],
+                correct: 4
+            },
+            {
+                question: "The school authorities were unanimous in their decision that erring students should be suspended.",
+                options: ["in disagreement", "disunited", "in complete agreement", "anonymous", "unwilling"],
+                correct: 2
+            },
+            {
+                question: "He looked feeble on his sick bed.",
+                options: ["hungry", "weak", "dirty", "sick", "thin"],
+                correct: 1
+            },
+            {
                 question: "My father has set his heart on a roast chicken dinner for Christmas.",
                 options: [
                     "wants more than anything else a roast chicken dinner for Christmas",
@@ -81,6 +157,28 @@
                     "can take the roast chicken or leave it",
                     "has attended his heart to a roast chicken",
                     "just bought a heart-shaped roast chicken"
+                ],
+                correct: 0
+            },
+            {
+                question: "Ike is a glutton. This means that Ike...",
+                options: [
+                    "has a small appetite",
+                    "likes fatty foods",
+                    "kept his friend's food",
+                    "did not eat anything",
+                    "eats too much"
+                ],
+                correct: 4
+            },
+            {
+                question: "When he got to the corner, he did not know in which direction to go. This means that he...",
+                options: [
+                    "was confused about the road to take",
+                    "planned to go in any direction",
+                    "just decided to stop at the corner",
+                    "found out there was no road",
+                    "changed his mind and went back"
                 ],
                 correct: 0
             }
@@ -93,6 +191,7 @@
         const optionsElement = document.getElementById("options");
         const nextButton = document.getElementById("next-btn");
         const resultElement = document.getElementById("result");
+        const progressBar = document.getElementById("progress-bar");
 
         function loadQuestion() {
             const currentQuestion = questions[currentQuestionIndex];
@@ -103,6 +202,7 @@
                 li.innerHTML = `<button onclick="checkAnswer(${index})">${option}</button>`;
                 optionsElement.appendChild(li);
             });
+            updateProgressBar();
         }
 
         function checkAnswer(selectedIndex) {
@@ -119,6 +219,11 @@
             nextButton.style.display = "inline-block";
         }
 
+        function updateProgressBar() {
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
         nextButton.addEventListener("click", () => {
             resultElement.style.display = "none";
             nextButton.style.display = "none";
@@ -129,6 +234,7 @@
                 questionElement.textContent = "You’ve completed the adventure!";
                 optionsElement.innerHTML = "";
                 resultElement.textContent = `Your score is ${score}/${questions.length}.`;
+                resultElement.style.color = "blue";
                 resultElement.style.display = "block";
                 nextButton.style.display = "none";
             }
